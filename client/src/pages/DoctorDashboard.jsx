@@ -8,17 +8,16 @@ import {
   FaCalendarAlt,
   FaClipboardList,
   FaFileMedical,
-  FaBell,
   FaSignOutAlt,
   FaUserCircle,
   FaUsers,
-  FaHospital,
   FaRegClock
 } from "react-icons/fa";
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+  const [userName, setUserName] = useState("");
   const [stats, setStats] = useState({
     appointments: 0,
     pendingAppointments: 0,
@@ -41,9 +40,10 @@ const DoctorDashboard = () => {
         if (!token) {
           throw new Error("No token found");
         }
-        
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.id;
         // Fetch appointments
-        const appointmentsRes = await axios.get("http://localhost:5000/appointments", {
+        const appointmentsRes = await axios.get("https://medcarehms.onrender.com/appointments", {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -77,20 +77,22 @@ const DoctorDashboard = () => {
         
         
         // Fetch patients - modify endpoint as needed
-        const usersRes = await axios.get("http://localhost:5000/users", {
+        const usersRes = await axios.get("https://medcarehms.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+      
+      // Get the current user's name and store it in state
+      const currentUserName = usersRes.data.find((user) => user._id === userId)?.name;
+      setUserName(currentUserName || "");
         // Filter only patients - Fix: store the array first, then get length
         const patientsList = usersRes.data.filter(user => user.role?.toLowerCase() === 'patient');
         const patientCount = patientsList.length;
         
         // Fetch reports
-        const reportsRes = await axios.get("http://localhost:5000/reports", {
+        const reportsRes = await axios.get("https://medcarehms.onrender.com/reports", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.id;
+        
 
         
         // Fix doctor report filtering
@@ -141,7 +143,7 @@ const DoctorDashboard = () => {
           <div className="flex items-center mb-6">
             <FaUserCircle className="text-gray-400 text-4xl mr-3" />
             <div>
-              <h2 className="text-lg font-medium">{user?.name || "Doctor"}</h2>
+              <h2 className="text-lg font-medium">{userName || "Doctor"}</h2>
               <p className="text-sm text-gray-600">Doctor</p>
             </div>
           </div>

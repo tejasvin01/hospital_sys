@@ -26,7 +26,7 @@ const AdminAppointment = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/appointments", {
+      const response = await axios.get("https://medcarehms.onrender.com/appointments", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -87,7 +87,7 @@ const AdminAppointment = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/appointments/${id}`,
+        `https://medcarehms.onrender.com/appointments/${id}`,
         { status },
         {
           headers: {

@@ -47,7 +47,7 @@ const AdminReport = () => {
                 }
 
                 // Fetch reports
-                const response = await axios.get('http://localhost:5000/reports', {
+                const response = await axios.get('https://medcarehms.onrender.com/reports', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -56,7 +56,7 @@ const AdminReport = () => {
                 setFilteredReports(response.data);
                 
                 // Fetch doctors for filter dropdown
-                const doctorsResponse = await axios.get('http://localhost:5000/users', {
+                const doctorsResponse = await axios.get('https://medcarehms.onrender.com/users', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

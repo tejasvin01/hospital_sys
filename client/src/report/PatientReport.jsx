@@ -26,7 +26,7 @@ const PatientReport = () => {
 
         // Fetch reports
         const response = await axios.get(
-          "http://localhost:5000/reports/my-reports",
+          "https://medcarehms.onrender.com/reports/my-reports",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ const PatientReport = () => {
         );
 
         // Fetch all doctors in one request for efficiency
-        const doctorsResponse = await axios.get("http://localhost:5000/users", {
+        const doctorsResponse = await axios.get("https://medcarehms.onrender.com/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

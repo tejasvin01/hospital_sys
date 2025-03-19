@@ -23,7 +23,7 @@ const PatientAppointment = () => {
     // Function to fetch users data
     const fetchUsers = async (token) => {
         try {
-            const response = await axios.get('http://localhost:5000/users', {
+            const response = await axios.get('https://medcarehms.onrender.com/users', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -175,7 +175,7 @@ const PatientAppointment = () => {
                 return;
             }
             
-            const response = await axios.post('http://localhost:5000/appointments', appointmentData, {
+            const response = await axios.post('https://medcarehms.onrender.com/appointments', appointmentData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'

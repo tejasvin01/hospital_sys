@@ -2,18 +2,14 @@ import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import {
-  FaUserPlus,
   FaCalendarAlt,
   FaClipboardList,
-  FaClock,
-  FaBell,
   FaSignOutAlt,
   FaUserCircle,
   FaUsers,
-  FaHospital,
   FaPhoneAlt,
-  FaSearch,
   FaFileInvoiceDollar,
   FaReceipt,
   FaFileAlt,
@@ -22,6 +18,7 @@ import {
 const ReceptionistDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+  const [userName, setUserName] = useState("");
   const [stats, setStats] = useState({
     todayAppointments: 0,
     totalDoctors: 0,
@@ -38,14 +35,15 @@ const ReceptionistDashboard = () => {
 
         const token =
           localStorage.getItem("token") || sessionStorage.getItem("token");
-
+        const decoded = jwtDecode(token);
+        const id= decoded.id;
         if (!token) {
           throw new Error("No token found");
         }
 
         // Fix endpoint from "appointments" to "appointment"
         const appointmentsRes = await axios.get(
-          "http://localhost:5000/appointments",
+          "https://medcarehms.onrender.com/appointments",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -55,7 +53,7 @@ const ReceptionistDashboard = () => {
 
         // Filter today's appointments
         const todayAppointments = appointmentsRes.data.filter(
-          (appointment) => appointment.date === today
+          (appointment) =>  appointment.status === "Pending"
         );
 
         // Get recent appointments for display
@@ -64,11 +62,11 @@ const ReceptionistDashboard = () => {
           .slice(0, 5);
 
         // Fetch users
-        const usersRes = await axios.get("http://localhost:5000/users", {
+        const usersRes = await axios.get("https://medcarehms.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        // Count doctors and patients
+        const currentUserName = usersRes.data.find((user) => user._id === id)?.name;
+        setUserName(currentUserName || "User"); // Log the user name for debugging
         const doctors = usersRes.data.filter(
           (user) => user.role?.toLowerCase() === "doctor"
         );
@@ -125,31 +123,6 @@ const ReceptionistDashboard = () => {
     }
   };
 
-  //   try {
-  //     const token =
-  //       localStorage.getItem("token") || sessionStorage.getItem("token");
-
-  //     if (!token) {
-  //       throw new Error("No token found");
-  //     }
-
-  //     await axios.patch(
-  //       `http://localhost:5000/appointment/${appointmentId}`,
-  //       { checkedIn: true },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-
-  //     // Update local state to reflect check-in
-  //     setRecentAppointments((prev) =>
-  //       prev.map((apt) =>
-  //         apt._id === appointmentId ? { ...apt, checkedIn: true } : apt
-  //       )
-  //     );
-  //   } catch (error) {
-  //     console.error("Error checking in patient:", error);
-  //     alert("Failed to check in patient. Please try again.");
-  //   }
-  // };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -169,7 +142,7 @@ const ReceptionistDashboard = () => {
             <FaUserCircle className="text-gray-400 text-4xl mr-3" />
             <div>
               <h2 className="text-lg font-medium">
-                {user?.name || "Receptionist"}
+                { userName || "Receptionist"}
               </h2>
               <p className="text-sm text-gray-600">Receptionist</p>
             </div>
@@ -270,7 +243,7 @@ const ReceptionistDashboard = () => {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-sm font-medium text-gray-500">
-                        Today's Appointments
+                        Appointments Pending
                       </h3>
                       <p className="text-2xl font-semibold">
                         {stats.todayAppointments}
@@ -325,9 +298,7 @@ const ReceptionistDashboard = () => {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Patient
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Doctor
-                          </th>
+                         
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Date
                           </th>
@@ -360,13 +331,7 @@ const ReceptionistDashboard = () => {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {appointment.doctorName ||
-                                (appointment.doctorId &&
-                                typeof appointment.doctorId === "object"
-                                  ? appointment.doctorId.name
-                                  : "Doctor")}
-                            </td>
+                            
                             <td className="px-6 py-4 whitespace-nowrap">
                               {appointment.date
                                 ? new Date(
@@ -381,9 +346,9 @@ const ReceptionistDashboard = () => {
                               <span
                                 className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 ${
-                                  appointment.checkedIn
+                                  appointment.status=== "Approved"
                                     ? "bg-green-100 text-green-800"
-                                    : appointment.status === "cancelled"
+                                    : appointment.status === "Rejected"
                                     ? "bg-red-100 text-red-800"
                                     : "bg-yellow-100 text-yellow-800"
                                 }`}

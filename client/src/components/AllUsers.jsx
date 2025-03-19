@@ -31,7 +31,7 @@ const AllUsers = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://localhost:5000/users", {
+      .get("https://medcarehms.onrender.com/users", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

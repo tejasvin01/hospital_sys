@@ -1,32 +1,53 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect} from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 import {
-  FaCalendar,
-  FaFileMedical,
-  FaDollarSign,
-  FaUserCircle,
   FaChevronDown,
 } from "react-icons/fa";
 
 const PatientDashboard = () => {
   const { user, logout } = useContext(AuthContext);
+  const [patientData, setPatientData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-
-  const getStatusColor = (status) => {
-    const statusColors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      ready: "bg-green-100 text-green-800",
-      viewed: "bg-blue-100 text-blue-800",
-      paid: "bg-green-100 text-green-800",
-      overdue: "bg-red-100 text-red-800",
-      confirmed: "bg-green-100 text-green-800",
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      try {
+        // Get the token
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found");
+        }
+        
+        // Decode the token to get the current user's ID
+        const decoded = jwtDecode(token);
+        const userId = decoded.id;
+        // Fetch all users
+        const response = await axios.get("https://medcarehms.onrender.com/users", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Find the current user in the response
+        const currentUser = response.data.find(user => user._id === userId);
+        
+        if (currentUser) {
+          setPatientData(currentUser);
+        }
+      } catch (error) {
+        console.error("Error fetching patient data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    return statusColors[status] || "bg-gray-100 text-gray-800";
-  };
-
+    
+    fetchPatientData();
+  }, []);
+  
+  
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       {/* Fixed Header */}
@@ -52,7 +73,7 @@ const PatientDashboard = () => {
                   alt="User"
                   className="h-10 w-10 rounded-full object-cover"
                 />
-                <span className="text-gray-700 mr-2">{user?.name || 'User'}</span>
+                <span className="text-gray-700 mr-2">{patientData?.name || user?.name || 'User'}</span>
                 <FaChevronDown className="text-gray-500" />
               </button>
               {showUserDropdown && (
@@ -119,7 +140,7 @@ const PatientDashboard = () => {
                   ? "bg-blue-50 text-blue-600"
                   : "text-gray-600"
               }`}
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/patient-appointment")}
             >
               <i className="fas fa-calendar-alt text-xl w-8"></i>
               <span className="ml-3">Book Appointments</span>

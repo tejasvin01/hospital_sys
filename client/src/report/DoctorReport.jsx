@@ -88,7 +88,7 @@ const DoctorReport = () => {
   const fetchPatients = async (token) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/users?role=patient",
+        "https://medcarehms.onrender.com/users?role=patient",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ const DoctorReport = () => {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/reports", report, {
+      await axios.post("https://medcarehms.onrender.com/reports", report, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

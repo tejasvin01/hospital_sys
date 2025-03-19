@@ -26,7 +26,7 @@ const PatientInvoice = () => {
                 // User ID from token is available if needed
                 // const { id } = decodedToken;
 
-                const response = await axios.get(`http://localhost:5000/invoices/my-invoices`, {
+                const response = await axios.get(`https://medcarehms.onrender.com/invoices/my-invoices`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

@@ -12,7 +12,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -84,15 +83,7 @@ const Login = () => {
             </button>
           </div>
           <div className="flex items-center justify-between">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 text-[#2B84EA] border-gray-300 rounded focus:ring-[#2B84EA]"
-              />
-              <span className="ml-2 text-sm text-gray-600">Remember Me</span>
-            </label>
+            
             <button type="button" className="text-sm text-[#2B84EA] hover:text-[#2876D0] cursor-pointer" onClick={() => navigate("/signup")}>
               Already have account? Signup
             </button>

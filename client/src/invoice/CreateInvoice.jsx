@@ -54,7 +54,7 @@ const Createbill = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/users", {
+        const response = await axios.get("https://medcarehms.onrender.com/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -126,7 +126,7 @@ const Createbill = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/invoices",
+        "https://medcarehms.onrender.com/invoices",
         {
           patientId,
           amount: parseFloat(amount),

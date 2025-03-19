@@ -115,7 +115,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/signup",
+        "https://medcarehms.onrender.com/auth/signup",
         payload
       );
       setSuccess("Signup successful! Redirecting to login...");
