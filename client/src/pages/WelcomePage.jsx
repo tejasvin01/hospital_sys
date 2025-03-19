@@ -22,7 +22,7 @@ const WelcomePage = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <img
-                src="/src/public/images/hospital-logo.png"
+                src="/images/hospital-logo.png"
                 alt="MedCare Logo"
                 className="h-12 w-12 object-contain mr-3 animate-pulse"
               />
@@ -347,7 +347,7 @@ const WelcomePage = () => {
           <div data-aos="fade-up" data-aos-delay="0">
             <div className="flex items-center mb-4">
               <img
-                src="/src/public/images/hospital-logo.png"
+                src="/images/hospital-logo.png"
                 alt="MedCare Logo"
                 className="h-10 w-10 object-contain mr-3"
               />
