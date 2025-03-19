@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect} from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import hospitalLogo from "../assets/images/hospital-logo.png";
 import axios from "axios";
 import {
   FaChevronDown,
@@ -55,7 +56,7 @@ const PatientDashboard = () => {
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <img
-              src="/images/hospital-logo.png"
+              src={hospitalLogo}
               alt="Hospital Logo"
               className="h-8"
             />

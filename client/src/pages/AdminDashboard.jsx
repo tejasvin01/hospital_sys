@@ -3,6 +3,7 @@ import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import hospitalLogo from "../assets/images/hospital-logo.png";
 
 const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -157,7 +158,7 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center ">
             <img
-              src="images/hospital-logo.png"
+              src={hospitalLogo}
               alt="Hospital Logo"
               className="h-10 w-10"
             />

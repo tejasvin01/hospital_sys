@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
+import hospitalLogo from "../assets/images/hospital-logo.png";
 import {
   FaUserMd,
   FaCalendarAlt,
@@ -132,7 +133,7 @@ const DoctorDashboard = () => {
       <div className="w-64 bg-white shadow-md z-10">
         <div className="p-4 border-b">
           <div className="flex items-center justify-center">
-          <img src="/images/hospital-logo.png"
+          <img src={hospitalLogo}
               alt="Hospital Logo"
               className="h-10 w-10" />
             <h1 className="text-xl font-bold text-gray-800">MedCare HMS</h1>
