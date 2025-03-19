@@ -55,7 +55,7 @@ const PatientDashboard = () => {
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <img
-              src="/src/assets/images/hospital-logo.png"
+              src="/src/public/images/hospital-logo.png"
               alt="Hospital Logo"
               className="h-8"
             />

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import hospitalLogo from "../assets/images/hospital-logo.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -23,7 +22,7 @@ const WelcomePage = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <img
-                src={hospitalLogo}
+                src="/src/public/images/hospital-logo.png"
                 alt="MedCare Logo"
                 className="h-12 w-12 object-contain mr-3 animate-pulse"
               />
@@ -106,7 +105,7 @@ const WelcomePage = () => {
           </div>
           <div className="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
             <img
-              src="src/assets/images/hospital1.webp"
+              src="src/public/images/hospital1.webp"
               alt="Healthcare Team Consultation"
               className="rounded-xl shadow-2xl hover:shadow-3xl transition-shadow transform hover:scale-[1.02] w-full h-auto object-cover object-center md:h-[400px]"
               loading="lazy"
@@ -270,21 +269,21 @@ const WelcomePage = () => {
                   "MedCare HMS has transformed our hospital operations. Patient management is now seamless and efficient.",
                 name: "Dr. Sarah Johnson",
                 role: "Chief Medical Officer",
-                avatar: "src/assets/images/sarah.jpg",
+                avatar: "src/public/images/sarah.jpg",
               },
               {
                 quote:
                   "The intuitive interface made training our staff quick and easy. We've saved countless hours on administrative tasks.",
                 name: "Michael Chen",
                 role: "Hospital Administrator",
-                avatar: "src/assets/images/chen.jpg",
+                avatar: "src/public/images/chen.jpg",
               },
               {
                 quote:
                   "As a doctor, having instant access to patient records has improved my decision-making and quality of care.",
                 name: "Dr. Emily Rodriguez",
                 role: "Cardiologist",
-                avatar: "src/assets/images/emily.jpg",
+                avatar: "src/public/images/emily.jpg",
               },
             ].map((testimonial, index) => (
               <div
@@ -348,7 +347,7 @@ const WelcomePage = () => {
           <div data-aos="fade-up" data-aos-delay="0">
             <div className="flex items-center mb-4">
               <img
-                src={hospitalLogo}
+                src="/src/public/images/hospital-logo.png"
                 alt="MedCare Logo"
                 className="h-10 w-10 object-contain mr-3"
               />

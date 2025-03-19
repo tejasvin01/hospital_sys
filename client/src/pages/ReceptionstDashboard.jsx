@@ -130,7 +130,7 @@ const ReceptionistDashboard = () => {
       <div className="w-64 bg-white shadow-md z-10">
         <div className="p-4 border-b">
           <div className="flex items-center justify-center">
-          <img src="/src/assets/images/hospital-logo.png"
+          <img src="/src/public/images/hospital-logo.png"
               alt="Hospital Logo"
               className="h-10 w-10" />
             <h1 className="text-xl font-bold text-gray-800">MedCare HMS</h1>

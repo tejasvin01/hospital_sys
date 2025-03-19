@@ -157,7 +157,7 @@ const AdminDashboard = () => {
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center ">
             <img
-              src="/src/assets/images/hospital-logo.png"
+              src="/src/public/images/hospital-logo.png"
               alt="Hospital Logo"
               className="h-10 w-10"
             />

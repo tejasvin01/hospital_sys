@@ -49,7 +49,7 @@ const Login = () => {
       <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-lg p-8">
         <div className="flex justify-center mb-8">
           <img 
-            src="/src/assets/images/hospital-logo.png"
+            src="/src/public/images/hospital-logo.png"
             alt="Hospital Logo"
             className="w-[120px] h-[120px] object-contain"
           />
