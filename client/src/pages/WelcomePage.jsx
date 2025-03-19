@@ -22,7 +22,7 @@ const WelcomePage = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <img
-                src="/images/hospital-logo.png"
+                src="images/hospital-logo.png"
                 alt="MedCare Logo"
                 className="h-12 w-12 object-contain mr-3 animate-pulse"
               />
