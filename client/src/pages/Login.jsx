@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { loginUser } from "../api/auth";
 import { jwtDecode } from "jwt-decode";
+import hospitalLogo from "../assets/images/hospital-logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
@@ -49,7 +50,7 @@ const Login = () => {
       <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-lg p-8">
         <div className="flex justify-center mb-8">
           <img 
-            src="/images/hospital-logo.png"
+            src={hospitalLogo}
             alt="Hospital Logo"
             className="w-[120px] h-[120px] object-contain"
           />
