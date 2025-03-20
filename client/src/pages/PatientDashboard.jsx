@@ -12,7 +12,8 @@ import {
   FaFileInvoiceDollar,
   FaCalendarAlt,
   FaFileMedical,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaUserCircle
 } from "react-icons/fa";
 
 const PatientDashboard = () => {
@@ -22,7 +23,6 @@ const PatientDashboard = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  // Add state for mobile sidebar
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -58,54 +58,196 @@ const PatientDashboard = () => {
     fetchPatientData();
   }, []);
   
-  // Close sidebar on mobile when clicking a navigation item
-  const handleNavigation = (path) => {
+  const handleMenuClick = (sectionId) => {
+    setActiveSection(sectionId);
+    setSidebarOpen(false); // Close sidebar on mobile
+    
+    // Navigate based on menu item
+    switch (sectionId) {
+      case "dashboard":
+        navigate("/patient-dashboard");
+        break;
+      case "reports":
+        navigate("/my-report");
+        break;
+      case "invoices":
+        navigate("/my-invoice");
+        break;
+      case "appointments":
+        navigate("/patient-appointment");
+        break;
+      default:
+        break;
+    }
+  };
+  
+  const handleLogout = () => {
+    setShowUserDropdown(false);
     setSidebarOpen(false);
-    navigate(path);
+    logout();
+    navigate("/login");
+  };
+  
+  const closeSidebar = () => {
+    setSidebarOpen(false);
   };
   
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
-      {/* Fixed Header - Updated for mobile */}
-      <header className="fixed top-0 left-0 right-0 bg-white shadow-sm flex-shrink-0 z-30">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+    <div className="flex flex-col h-screen bg-gray-100 md:flex-row">
+      {/* Mobile Header - Only visible on mobile */}
+      <header className="bg-white shadow-sm md:hidden z-10">
+        <div className="flex items-center justify-between p-4">
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
+          >
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
           <div className="flex items-center">
-            {/* Mobile menu toggle button */}
-            <button 
-              className="mr-3 text-gray-500 md:hidden"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <img
-                src={hospitalLogo}
-                alt="Hospital Logo"
-                className="h-8"
-              />
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-800">MedCare HMS</h1>
+            <img 
+              src={hospitalLogo}
+              alt="Hospital Logo"
+              className="h-8 w-8 mr-2" 
+            />
+            <h1 className="text-lg font-bold text-gray-800">MedCare HMS</h1>
+          </div>
+          <div className="w-8">
+            {/* Placeholder for alignment */}
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar Overlay - Only visible on mobile when sidebar is open */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar - Now matches DoctorDashboard layout */}
+      <div 
+        className={`
+          fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform 
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          md:translate-x-0 md:static md:h-screen
+          transition-transform duration-300 ease-in-out
+        `}
+      >
+        {/* Sidebar Header with Logo */}
+        <div className="p-4 border-b md:block">
+          <div className="flex items-center justify-center">
+            <img 
+              src={hospitalLogo}
+              alt="Hospital Logo"
+              className="h-10 w-10 mr-2" 
+            />
+            <h1 className="text-xl font-bold text-gray-800">MedCare HMS</h1>
+          </div>
+        </div>
+        
+        <div className="p-4">
+          {/* Patient Profile Section */}
+          <div className="flex items-center mb-6">
+            <FaUserCircle className="text-gray-400 text-4xl mr-3" />
+            <div>
+              <h2 className="text-lg font-medium">{patientData?.name || "Patient"}</h2>
+              <p className="text-sm text-gray-600">Patient</p>
             </div>
           </div>
-          <div className="flex items-center">
-            {/* Right side - User profile */}
+          
+          {/* Navigation Menu */}
+          <nav className="mt-8">
+            <div className="space-y-2">
+              <button 
+                onClick={() => handleMenuClick("dashboard")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  activeSection === "dashboard" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaHome className={`mr-3 ${activeSection === "dashboard" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Dashboard</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("reports")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  activeSection === "reports" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaFileMedical className={`mr-3 ${activeSection === "reports" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>My Reports</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("invoices")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  activeSection === "invoices" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaFileInvoiceDollar className={`mr-3 ${activeSection === "invoices" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>My Invoices</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("appointments")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  activeSection === "appointments" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaCalendarAlt className={`mr-3 ${activeSection === "appointments" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Book Appointments</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+        
+        {/* Logout Button - Fixed at Bottom */}
+        <div className="absolute bottom-0 w-64 p-4 border-t bg-white">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
+          >
+            <FaSignOutAlt className="mr-3" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto pt-0 md:pt-0">
+        {/* Desktop Header - Hidden on mobile */}
+        <header className="bg-white shadow-sm hidden md:block">
+          <div className="flex items-center justify-between px-6 py-5">
+            <h1 className="text-2xl font-bold text-gray-800">Patient Dashboard</h1>
+            
+            {/* Optional User Menu on Desktop */}
             <div className="relative">
               <button
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className="flex items-center space-x-2 sm:space-x-3 cursor-pointer"
+                className="flex items-center space-x-3 cursor-pointer"
               >
                 <img
                   src={user?.profileImage || "https://public.readdy.ai/ai/img_res/4769923e2a4b10f063d40bf3f71c0205.jpg"}
                   alt="User"
-                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
+                  className="h-10 w-10 rounded-full object-cover"
                 />
-                <span className="text-gray-700 hidden sm:inline">{patientData?.name || user?.name || 'User'}</span>
+                <span className="text-gray-700">{patientData?.name || user?.name || 'User'}</span>
                 <FaChevronDown className="text-gray-500" />
               </button>
               {showUserDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
                   <div className="py-2">
                     <button
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
                     >
                       Logout
@@ -115,93 +257,17 @@ const PatientDashboard = () => {
               )}
             </div>
           </div>
-        </div>
-      </header>
-
-      {/* Main content area with padding top for fixed header */}
-      <div className="flex flex-1 pt-16 overflow-hidden">
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
-            onClick={() => setSidebarOpen(false)}
-          ></div>
-        )}
+        </header>
         
-        {/* Sidebar navigation - Now responsive */}
-        <aside 
-          className={`fixed top-16 left-0 w-64 bg-white shadow-sm h-screen overflow-y-auto z-20 transform transition-transform duration-300 ease-in-out ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-          }`}
-        >
-          <nav className="mt-4">
-            <div
-              className={`flex items-center px-4 py-3 cursor-pointer ${
-                activeSection === "dashboard"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
-              }`}
-              onClick={() => handleNavigation("/patient-dashboard")}
-            >
-              <FaHome className="text-xl w-8" />
-              <span className="ml-3">Dashboard</span>
+        {/* Dashboard Content */}
+        <main className="p-4 md:p-6 mt-0 md:mt-0">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <p className="ml-3 text-gray-600">Loading dashboard data...</p>
             </div>
-
-            <div
-              className={`flex items-center px-4 py-3 cursor-pointer ${
-                activeSection === "reports"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
-              }`}
-              onClick={() => handleNavigation("/my-report")}
-            >
-              <FaFileMedical className="text-xl w-8" />
-              <span className="ml-3">My Report</span>
-            </div>
-
-            <div
-              className={`flex items-center px-4 py-3 cursor-pointer ${
-                activeSection === "invoices"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
-              }`}
-              onClick={() => handleNavigation("/my-invoice")}
-            >
-              <FaFileInvoiceDollar className="text-xl w-8" />
-              <span className="ml-3">My Invoice</span>
-            </div>
-
-            <div
-              className={`flex items-center px-4 py-3 cursor-pointer ${
-                activeSection === "appointments"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600"
-              }`}
-              onClick={() => handleNavigation("/patient-appointment")}
-            >
-              <FaCalendarAlt className="text-xl w-8" />
-              <span className="ml-3">Book Appointments</span>
-            </div>
-          </nav>
-
-          <div className="fixed bottom-0 left-0 w-64 p-4 border-t bg-white shadow-md z-10">
-            <button
-              onClick={() => {
-                setSidebarOpen(false);
-                logout();
-              }}
-              className="flex items-center w-full text-gray-600 hover:text-red-600 transition-colors cursor-pointer p-2 rounded-lg hover:bg-gray-100"
-            >
-              <FaSignOutAlt className="text-xl w-8" />
-              <span className="ml-3 font-medium">Logout</span>
-            </button>
-          </div>
-        </aside>
-
-        {/* Main content with responsive margin-left */}
-        <div className={`flex-1 ${sidebarOpen ? 'ml-0' : 'ml-0 md:ml-64'} flex flex-col transition-all duration-300`}>
-          <main className="p-4 sm:p-6 flex-1 overflow-y-auto">
-            {/* Welcome section with responsive layout */}
+          ) : (
+            /* Welcome section with responsive layout */
             <div className="bg-white rounded-lg shadow mt-4">
               <div className="p-4 sm:p-8 border-b">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">
@@ -357,19 +423,19 @@ const PatientDashboard = () => {
               <div className="p-4 sm:p-6 bg-gray-50 rounded-b-lg border-t">
                 <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                   <button
-                    onClick={() => handleNavigation("/patient-appointment")}
+                    onClick={() => handleMenuClick("appointments")}
                     className="px-4 sm:px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors w-full sm:w-auto"
                   >
                     Book an Appointment
                   </button>
                   <button
-                    onClick={() => handleNavigation("/my-report")}
+                    onClick={() => handleMenuClick("reports")}
                     className="px-4 sm:px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors w-full sm:w-auto"
                   >
                     View Reports
                   </button>
                   <button
-                    onClick={() => handleNavigation("/my-invoice")}
+                    onClick={() => handleMenuClick("invoices")}
                     className="px-4 sm:px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors w-full sm:w-auto"
                   >
                     View Invoices
@@ -377,8 +443,8 @@ const PatientDashboard = () => {
                 </div>
               </div>
             </div>
-          </main>
-        </div>
+          )}
+        </main>
       </div>
     </div>
   );

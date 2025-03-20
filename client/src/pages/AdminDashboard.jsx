@@ -4,6 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import hospitalLogo from "../assets/images/hospital-logo.png";
+import {
+  FaUserMd,
+  FaCalendarAlt,
+  FaClipboardList,
+  FaFileMedical,
+  FaSignOutAlt,
+  FaUserCircle,
+  FaUsers,
+  FaChartLine,
+  FaMoneyBillWave,
+  FaFileInvoice,
+  FaBars,
+  FaTimes
+} from "react-icons/fa";
 
 const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -13,10 +27,10 @@ const AdminDashboard = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [recentUsers, setRecentUsers] = useState([]);
   
-  // Add state for mobile menu
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Change from mobileMenuOpen to sidebarOpen to match DoctorDashboard
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Add new state variables for dashboard stats
+  // Stats state
   const [stats, setStats] = useState({
     totalPatients: 0,
     appointmentsToday: 0,
@@ -127,7 +141,7 @@ const AdminDashboard = () => {
 
   const handleMenuClick = (menuId) => {
     setSelectedMenu(menuId);
-    setMobileMenuOpen(false); // Close mobile menu when clicking an item
+    setSidebarOpen(false); // Close sidebar when clicking an item
     
     switch (menuId) {
       case "appointments":
@@ -156,156 +170,200 @@ const AdminDashboard = () => {
     navigate("/login");
   };
 
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="bg-white shadow-sm flex-shrink-0 z-20">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+    <div className="flex flex-col h-screen bg-gray-100 md:flex-row">
+      {/* Mobile Header - Only visible on mobile */}
+      <header className="bg-white shadow-sm md:hidden z-10">
+        <div className="flex items-center justify-between p-4">
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
+          >
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
           <div className="flex items-center">
-            {/* Mobile menu button */}
-            <button 
-              className="mr-2 block sm:hidden text-gray-500 focus:outline-none" 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
-            </button>
-            
-            <img
+            <img 
               src={hospitalLogo}
               alt="Hospital Logo"
-              className="h-8 w-8 sm:h-10 sm:w-10"
+              className="h-8 w-8 mr-2" 
             />
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-800 ml-2">MedCare HMS</h1>
+            <h1 className="text-lg font-bold text-gray-800">MedCare HMS</h1>
           </div>
-          <div className="flex items-center space-x-4 sm:space-x-6">
-            {/* User Profile */}
-            <div className="relative">
-              <button
-                onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className="flex items-center space-x-2 sm:space-x-3 cursor-pointer"
-              >
-                <img
-                  src="https://public.readdy.ai/ai/img_res/4769923e2a4b10f063d40bf3f71c0205.jpg"
-                  alt="Admin"
-                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
-                />
-                <span className="text-gray-700 hidden sm:inline">{userName || "Admin"}</span>
-                <i className="fas fa-chevron-down text-gray-500"></i>
-              </button>
-              {showUserDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
-                  <div className="py-2">
-                    <button
-                      onClick={handleLogout}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+          <div className="w-8">
+            {/* Placeholder for alignment */}
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Mobile menu overlay */}
-        {mobileMenuOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-10 sm:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-          ></div>
-        )}
+      {/* Sidebar Overlay - Only visible on mobile when sidebar is open */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar - Now matches DoctorDashboard */}
+      <div 
+        className={`
+          fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform 
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          md:translate-x-0 md:static md:h-screen
+          transition-transform duration-300 ease-in-out
+        `}
+      >
+        {/* Sidebar Header */}
+        <div className="p-4 border-b md:block">
+          <div className="flex items-center justify-center">
+            <img 
+              src={hospitalLogo}
+              alt="Hospital Logo"
+              className="h-10 w-10 mr-2" 
+            />
+            <h1 className="text-xl font-bold text-gray-800">MedCare HMS</h1>
+          </div>
+        </div>
         
-        {/* Sidebar - now responsive */}
-        <aside 
-          className={`${
-            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'
-          } transition-transform duration-300 ease-in-out transform fixed sm:static left-0 top-0 h-full pt-16 sm:pt-0 w-64 bg-white shadow-sm overflow-y-auto z-10`}
-        >
-          <nav className="p-4 pb-20">
+        <div className="p-4">
+          {/* Admin Profile */}
+          <div className="flex items-center mb-6">
+            <FaUserCircle className="text-gray-400 text-4xl mr-3" />
+            <div>
+              <h2 className="text-lg font-medium">{userName || "Admin"}</h2>
+              <p className="text-sm text-gray-600">Administrator</p>
+            </div>
+          </div>
+          
+          {/* Navigation Menu */}
+          <nav className="mt-8">
             <div className="space-y-2">
-              {[
-                {
-                  icon: "fas fa-chart-line",
-                  text: "Dashboard",
-                  id: "dashboard",
-                },
-                { icon: "fas fa-user-md", text: "Users", id: "users" },
-                {
-                  icon: "fas fa-calendar-alt",
-                  text: "Appointments",
-                  id: "appointments",
-                },
-                { icon: "fas fa-file-medical", text: "Reports", id: "reports" },
-                {
-                  icon: "fas fa-money-bill-wave",
-                  text: "Billing",
-                  id: "billing",
-                },
-                {
-                  icon: "fas fa-file-invoice",
-                  text: "Invoices",
-                  id: "invoices",
-                },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleMenuClick(item.id)}
-                  className={`flex items-center space-x-3 w-full p-3 rounded-lg cursor-pointer whitespace-nowrap
-                  ${
-                    selectedMenu === item.id
-                      ? "bg-indigo-50 text-indigo-600"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  <i className={`${item.icon} w-5`}></i>
-                  <span>{item.text}</span>
-                </button>
-              ))}
+              <button 
+                onClick={() => handleMenuClick("dashboard")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "dashboard" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaChartLine className={`mr-3 ${selectedMenu === "dashboard" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Dashboard</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("users")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "users" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaUserMd className={`mr-3 ${selectedMenu === "users" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Users</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("appointments")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "appointments" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaCalendarAlt className={`mr-3 ${selectedMenu === "appointments" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Appointments</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("reports")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "reports" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaClipboardList className={`mr-3 ${selectedMenu === "reports" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Reports</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("billing")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "billing" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaMoneyBillWave className={`mr-3 ${selectedMenu === "billing" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Billing</span>
+              </button>
+              
+              <button 
+                onClick={() => handleMenuClick("invoices")} 
+                className={`w-full flex items-center px-4 py-3 rounded-lg ${
+                  selectedMenu === "invoices" 
+                  ? "text-gray-900 bg-blue-50"
+                  : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FaFileInvoice className={`mr-3 ${selectedMenu === "invoices" ? "text-blue-600" : "text-gray-500"}`} />
+                <span>Invoices</span>
+              </button>
             </div>
           </nav>
-
-          {/* Fixed Logout Button */}
-          <div className="fixed bottom-0 left-0 w-64 p-4 border-t bg-white shadow-md z-10">
-            <button
-              onClick={logout}
-              className="flex items-center w-full text-gray-600 hover:text-red-600 transition-colors cursor-pointer p-2 rounded-lg hover:bg-gray-100"
-            >
-              <i className="fas fa-sign-out-alt text-xl w-8"></i>
-              <span className="ml-3 font-medium">Logout</span>
-            </button>
+        </div>
+        
+        {/* Logout Button */}
+        <div className="absolute bottom-0 w-64 p-4 border-t bg-white">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
+          >
+            <FaSignOutAlt className="mr-3" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto pt-0 md:pt-0">
+        {/* Desktop Header - Hidden on mobile */}
+        <header className="bg-white shadow-sm hidden md:block">
+          <div className="flex items-center justify-between px-6 py-5">
+            <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
           </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto sm:ml-0 ml-0 w-full">
+        </header>
+        
+        {/* Dashboard Content */}
+        <main className="p-4 md:p-6 mt-0 md:mt-0">
           {/* Stats grid - responsive columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
             {[
               {
                 title: "Total Patients",
                 value: stats.totalPatients,
-                icon: "fas fa-users",
+                icon: <FaUsers className="text-white text-xl sm:text-2xl" />,
                 color: "bg-blue-500",
               },
               {
                 title: "Appointments Pending",
                 value: stats.appointmentsToday,
-                icon: "fas fa-calendar-check",
+                icon: <FaCalendarAlt className="text-white text-xl sm:text-2xl" />,
                 color: "bg-green-500",
               },
               {
                 title: "Active Doctors",
                 value: stats.activeDoctors,
-                icon: "fas fa-user-md",
+                icon: <FaUserMd className="text-white text-xl sm:text-2xl" />,
                 color: "bg-purple-500",
               },
               {
                 title: "Total Receptionists",
                 value: stats.totalReceptionists,
-                icon: "fas fa-id-card",
+                icon: <FaUserCircle className="text-white text-xl sm:text-2xl" />,
                 color: "bg-amber-500",
               },
             ].map((stat, index) => (
@@ -318,7 +376,7 @@ const AdminDashboard = () => {
                     <h3 className="text-2xl sm:text-4xl font-bold mt-2">{stat.value}</h3>
                   </div>
                   <div className={`${stat.color} text-white p-3 sm:p-4 rounded-full`}>
-                    <i className={`${stat.icon} text-xl sm:text-2xl`}></i>
+                    {stat.icon}
                   </div>
                 </div>
               </div>
