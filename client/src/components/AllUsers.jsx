@@ -10,12 +10,17 @@ import {
   FaFilter,
   FaTimes,
   FaArrowLeft,
+  FaEye,
+  FaPhoneAlt,
+  FaIdCard,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 
 const AllUsers = () => {
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate(-1)
+    navigate(-1);
   };
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -24,6 +29,10 @@ const AllUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Add state for selected user and modal visibility
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const token =
     localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -47,6 +56,19 @@ const AllUsers = () => {
         setLoading(false);
       });
   }, [token]);
+
+  // Updated function to handle viewing user details
+  const handleViewUser = (userId) => {
+    const user = users.find((user) => user._id === userId);
+    setSelectedUser(user);
+    setShowUserDetails(true);
+  };
+
+  // Close user details modal
+  const closeUserDetails = () => {
+    setShowUserDetails(false);
+    setSelectedUser(null);
+  };
 
   // Extract available roles from users data
   const availableRoles = React.useMemo(() => {
@@ -104,7 +126,7 @@ const AllUsers = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white relative rounded-lg mb-6 pl-8">
-          <button 
+          <button
             onClick={handleBack}
             className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
             title="Go back"
@@ -113,9 +135,9 @@ const AllUsers = () => {
           </button>
           <div className="ml-8">
             <h1 className="text-3xl font-bold">User Management</h1>
+            <p className="mt-2 text-lg">Manage all users in the system</p>
           </div>
         </div>
-
         {/* Search Controls Container */}
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
           {/* Search Bar and Filter Toggle in the same row */}
@@ -217,7 +239,6 @@ const AllUsers = () => {
             )}
           </div>
         </div>
-
         {/* User List */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {loading ? (
@@ -255,6 +276,9 @@ const AllUsers = () => {
                     <th className="px-6 py-4 text-sm font-medium text-gray-500">
                       Role
                     </th>
+                    <th className="px-6 py-4 text-sm font-medium text-gray-500">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -285,6 +309,15 @@ const AllUsers = () => {
                             {user.role}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleViewUser(user._id)}
+                          className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-colors"
+                          title="View user details"
+                        >
+                          <FaEye />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -323,6 +356,209 @@ const AllUsers = () => {
             </div>
           </div>
         </div>
+        {/* Enhanced User Details Modal */}
+        {showUserDetails && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200">
+              <div className="p-0">
+                {/* Header with gradient background */}
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-xl p-5">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-white flex items-center">
+                      <FaUserCircle className="mr-3 text-white/80" />
+                      User Details
+                    </h2>
+                    <button
+                      onClick={closeUserDetails}
+                      className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                </div>
+
+                {/* User basic info banner */}
+                <div className="bg-gray-50 p-4 border-b border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="bg-blue-100 p-3 rounded-full">
+                      <FaUserCircle className="text-blue-600 text-3xl" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        {selectedUser.name}
+                      </h3>
+                      <span
+                        className={`mt-1 px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadgeColor(
+                          selectedUser.role
+                        )}`}
+                      >
+                        {selectedUser.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* User details content */}
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* ID field takes full width due to potentially long value */}
+                    <div className="col-span-1 md:col-span-2 bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                      <div className="flex items-start">
+                        <FaIdCard className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <span className="text-gray-500 text-sm font-medium block mb-1">
+                            ID
+                          </span>
+                          <span className="text-gray-700 break-all font-mono text-sm">
+                            {selectedUser._id}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Left column */}
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaUserCircle className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Name
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.name}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaEnvelope className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Email
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.email}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaUserTag className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Role
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.role}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaCalendarAlt className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Age
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.age || "Not specified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right column */}
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <div className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex items-center justify-center flex-shrink-0">
+                            {selectedUser.gender === "Male"
+                              ? "♂"
+                              : selectedUser.gender === "Female"
+                              ? "♀"
+                              : "⚧"}
+                          </div>
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Gender
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.gender || "Not specified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaPhoneAlt className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Contact Number
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.contactNumber || "Not specified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <span className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0">
+                            🩸
+                          </span>
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Blood Group
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.bloodGroup || "Not specified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="flex items-start">
+                          <FaMapMarkerAlt className="text-blue-500 mt-0.5 mr-3 w-5 h-5 flex-shrink-0" />
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-1">
+                              Address
+                            </span>
+                            <span className="text-gray-700">
+                              {selectedUser.address || "Not specified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="bg-gray-50 px-6 py-4 rounded-b-xl border-t border-gray-200">
+                  <div className="flex justify-end">
+                    <button
+                      onClick={closeUserDetails}
+                      className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
+                    >
+                      <FaTimes className="mr-2" /> Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

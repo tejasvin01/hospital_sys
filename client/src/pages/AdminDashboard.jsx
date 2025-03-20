@@ -9,11 +9,13 @@ const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
-
   const [selectedMenu, setSelectedMenu] = useState("dashboard");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-
   const [recentUsers, setRecentUsers] = useState([]);
+  
+  // Add state for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   // Add new state variables for dashboard stats
   const [stats, setStats] = useState({
     totalPatients: 0,
@@ -43,10 +45,10 @@ const AdminDashboard = () => {
               Authorization: `Bearer ${token}`,
             },
           }
-        ); // Log the users data for debugging
+        );
         const currentUserName = usersResponse.data.find(
           (user) => user._id === userId
-        )?.name; // Log the user name for debugging
+        )?.name;
         setUserName(currentUserName || "");
 
         // Set recent users for the table
@@ -64,6 +66,7 @@ const AdminDashboard = () => {
         const receptionistCount = usersResponse.data.filter(
           (user) => user.role?.toLowerCase() === "receptionist"
         ).length;
+        
         // Fetch appointments for today
         const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
         const appointmentsResponse = await axios.get(
@@ -77,7 +80,7 @@ const AdminDashboard = () => {
 
         // Filter appointments for today
         const todayAppointments = appointmentsResponse.data.filter(
-          (appointment) =>  appointment.status === "Pending"
+          (appointment) => appointment.status === "Pending"
         );
 
         // Update stats with real data
@@ -124,6 +127,8 @@ const AdminDashboard = () => {
 
   const handleMenuClick = (menuId) => {
     setSelectedMenu(menuId);
+    setMobileMenuOpen(false); // Close mobile menu when clicking an item
+    
     switch (menuId) {
       case "appointments":
         navigate("/appointment");
@@ -154,29 +159,37 @@ const AdminDashboard = () => {
   return (
     <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-white shadow-sm flex-shrink-0">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center ">
+      <header className="bg-white shadow-sm flex-shrink-0 z-20">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+          <div className="flex items-center">
+            {/* Mobile menu button */}
+            <button 
+              className="mr-2 block sm:hidden text-gray-500 focus:outline-none" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
+            </button>
+            
             <img
               src={hospitalLogo}
               alt="Hospital Logo"
-              className="h-10 w-10"
+              className="h-8 w-8 sm:h-10 sm:w-10"
             />
-            <h1 className="text-xl font-semibold text-gray-800">MedCare HMS</h1>
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-800 ml-2">MedCare HMS</h1>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4 sm:space-x-6">
             {/* User Profile */}
             <div className="relative">
               <button
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className="flex items-center space-x-3 cursor-pointer"
+                className="flex items-center space-x-2 sm:space-x-3 cursor-pointer"
               >
                 <img
                   src="https://public.readdy.ai/ai/img_res/4769923e2a4b10f063d40bf3f71c0205.jpg"
                   alt="Admin"
-                  className="h-10 w-10 rounded-full object-cover"
+                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
                 />
-                <span className="text-gray-700">{userName || "Admin"}</span>
+                <span className="text-gray-700 hidden sm:inline">{userName || "Admin"}</span>
                 <i className="fas fa-chevron-down text-gray-500"></i>
               </button>
               {showUserDropdown && (
@@ -195,9 +208,22 @@ const AdminDashboard = () => {
           </div>
         </div>
       </header>
+
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-sm overflow-y-auto relative">
+        {/* Mobile menu overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-10 sm:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          ></div>
+        )}
+        
+        {/* Sidebar - now responsive */}
+        <aside 
+          className={`${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'
+          } transition-transform duration-300 ease-in-out transform fixed sm:static left-0 top-0 h-full pt-16 sm:pt-0 w-64 bg-white shadow-sm overflow-y-auto z-10`}
+        >
           <nav className="p-4 pb-20">
             <div className="space-y-2">
               {[
@@ -254,8 +280,9 @@ const AdminDashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-6 mb-6">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto sm:ml-0 ml-0 w-full">
+          {/* Stats grid - responsive columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
             {[
               {
                 title: "Total Patients",
@@ -282,34 +309,36 @@ const AdminDashboard = () => {
                 color: "bg-amber-500",
               },
             ].map((stat, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm p-8">
+              <div key={index} className="bg-white rounded-lg shadow-sm p-4 sm:p-8">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-base text-gray-500 font-medium">
+                    <p className="text-sm sm:text-base text-gray-500 font-medium">
                       {stat.title}
                     </p>
-                    <h3 className="text-4xl font-bold mt-2">{stat.value}</h3>
+                    <h3 className="text-2xl sm:text-4xl font-bold mt-2">{stat.value}</h3>
                   </div>
-                  <div className={`${stat.color} text-white p-4 rounded-full`}>
-                    <i className={`${stat.icon} text-2xl`}></i>
+                  <div className={`${stat.color} text-white p-3 sm:p-4 rounded-full`}>
+                    <i className={`${stat.icon} text-xl sm:text-2xl`}></i>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
+          
+          {/* Recent Users Table - with horizontal scroll on mobile */}
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">Recent Users</h2>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="min-w-full">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
                   </tr>
@@ -317,10 +346,10 @@ const AdminDashboard = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {recentUsers.map((user) => (
                     <tr key={user._id || user.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
                         {user.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                         ${
@@ -336,7 +365,7 @@ const AdminDashboard = () => {
                               user.role.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm truncate max-w-[150px] sm:max-w-none">
                         {user.email}
                       </td>
                     </tr>

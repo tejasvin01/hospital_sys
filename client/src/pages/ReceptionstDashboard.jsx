@@ -14,6 +14,8 @@ import {
   FaFileInvoiceDollar,
   FaReceipt,
   FaFileAlt,
+  FaBars,
+  FaTimes
 } from "react-icons/fa";
 
 const ReceptionistDashboard = () => {
@@ -28,6 +30,9 @@ const ReceptionistDashboard = () => {
   const [recentAppointments, setRecentAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  // Add state for mobile sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -92,7 +97,6 @@ const ReceptionistDashboard = () => {
 
     fetchDashboardData();
   }, []);
-  // Add this function inside the component, before the return statement
 
   const handleCallPatient = (appointment) => {
     let contactNumber;
@@ -124,16 +128,65 @@ const ReceptionistDashboard = () => {
     }
   };
 
+  const handleCheckIn = (appointmentId) => {
+    // Implementation for check-in functionality would go here
+    console.log("Check in for appointment:", appointmentId);
+  };
+
+  // Close sidebar when navigating or on mobile
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md z-10">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
+      {/* Mobile Header - Only visible on small screens */}
+      <header className="bg-white shadow-sm md:hidden z-20">
+        <div className="flex items-center justify-between p-4">
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
+          >
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
+          <div className="flex items-center">
+            <img 
+              src={hospitalLogo}
+              alt="Hospital Logo"
+              className="h-8 w-8 mr-2" 
+            />
+            <h1 className="text-lg font-bold text-gray-800">MedCare HMS</h1>
+          </div>
+          <div className="w-8">
+            {/* Placeholder for alignment */}
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={closeSidebar}
+        ></div>
+      )}
+
+      {/* Sidebar - Now responsive */}
+      <div 
+        className={`
+          fixed md:static inset-y-0 left-0 z-40 w-64 bg-white shadow-md transform
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          md:translate-x-0 transition-transform duration-300 ease-in-out
+          h-full md:h-screen overflow-y-auto
+        `}
+      >
         <div className="p-4 border-b">
           <div className="flex items-center justify-center">
-          <img src={hospitalLogo}
+            <img 
+              src={hospitalLogo}
               alt="Hospital Logo"
-              className="h-10 w-10" />
+              className="h-10 w-10 mr-2" 
+            />
             <h1 className="text-xl font-bold text-gray-800">MedCare HMS</h1>
           </div>
         </div>
@@ -152,7 +205,9 @@ const ReceptionistDashboard = () => {
           <nav className="mt-8">
             <div className="space-y-2">
               <button
-                onClick={() => {}}
+                onClick={() => {
+                  closeSidebar();
+                }}
                 className="w-full flex items-center px-4 py-3 text-gray-900 bg-blue-50 rounded-lg"
               >
                 <FaClipboardList className="mr-3 text-blue-600" />
@@ -160,7 +215,10 @@ const ReceptionistDashboard = () => {
               </button>
 
               <button
-                onClick={() => navigate("/appointment")}
+                onClick={() => {
+                  closeSidebar(); 
+                  navigate("/appointment");
+                }}
                 className="w-full flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-gray-50"
               >
                 <FaCalendarAlt className="mr-3 text-gray-500" />
@@ -168,7 +226,10 @@ const ReceptionistDashboard = () => {
               </button>
 
               <button
-                onClick={() => navigate("/report")}
+                onClick={() => {
+                  closeSidebar();
+                  navigate("/report");
+                }}
                 className="w-full flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-gray-50"
               >
                 <FaFileAlt className="mr-3 text-gray-500" />
@@ -176,7 +237,10 @@ const ReceptionistDashboard = () => {
               </button>
 
               <button
-                onClick={() => navigate("/invoice")}
+                onClick={() => {
+                  closeSidebar();
+                  navigate("/invoice");
+                }}
                 className="w-full flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-gray-50"
               >
                 <FaFileInvoiceDollar className="mr-3 text-gray-500" />
@@ -184,7 +248,10 @@ const ReceptionistDashboard = () => {
               </button>
 
               <button
-                onClick={() => navigate("/invoice/all")}
+                onClick={() => {
+                  closeSidebar();
+                  navigate("/invoice/all");
+                }}
                 className="w-full flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-gray-50"
               >
                 <FaReceipt className="mr-3 text-gray-500" />
@@ -196,7 +263,10 @@ const ReceptionistDashboard = () => {
 
         <div className="absolute bottom-0 w-64 p-4 border-t bg-white">
           <button
-            onClick={logout}
+            onClick={() => {
+              closeSidebar();
+              logout();
+            }}
             className="w-full flex items-center px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
           >
             <FaSignOutAlt className="mr-3" />
@@ -206,9 +276,9 @@ const ReceptionistDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white shadow-sm">
+      <div className="flex-1 overflow-y-auto pt-16 md:pt-0">
+        {/* Desktop Header - Hidden on mobile */}
+        <header className="bg-white shadow-sm hidden md:block">
           <div className="flex items-center justify-between px-6 py-4">
             <h1 className="text-2xl font-bold text-gray-800">
               Reception Dashboard
@@ -217,7 +287,7 @@ const ReceptionistDashboard = () => {
         </header>
 
         {/* Dashboard Content */}
-        <main className="p-6">
+        <main className="p-4 md:p-6">
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -235,9 +305,9 @@ const ReceptionistDashboard = () => {
             </div>
           ) : (
             <>
-              {/* Stats Cards - Modified to use 3 columns and removed Pending Check-ins card */}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white rounded-lg shadow-sm p-6">
+              {/* Stats Cards - Responsive layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+                <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
                   <div className="flex items-center">
                     <div className="bg-blue-100 p-3 rounded-full">
                       <FaCalendarAlt className="text-blue-600" />
@@ -246,14 +316,14 @@ const ReceptionistDashboard = () => {
                       <h3 className="text-sm font-medium text-gray-500">
                         Appointments Pending
                       </h3>
-                      <p className="text-2xl font-semibold">
+                      <p className="text-xl md:text-2xl font-semibold">
                         {stats.todayAppointments}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
                   <div className="flex items-center">
                     <div className="bg-purple-100 p-3 rounded-full">
                       <FaUsers className="text-purple-600" />
@@ -262,14 +332,14 @@ const ReceptionistDashboard = () => {
                       <h3 className="text-sm font-medium text-gray-500">
                         Total Doctors
                       </h3>
-                      <p className="text-2xl font-semibold">
+                      <p className="text-xl md:text-2xl font-semibold">
                         {stats.totalDoctors}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
                   <div className="flex items-center">
                     <div className="bg-yellow-100 p-3 rounded-full">
                       <FaUserCircle className="text-yellow-600" />
@@ -278,7 +348,7 @@ const ReceptionistDashboard = () => {
                       <h3 className="text-sm font-medium text-gray-500">
                         Total Patients
                       </h3>
-                      <p className="text-2xl font-semibold">
+                      <p className="text-xl md:text-2xl font-semibold">
                         {stats.totalPatients}
                       </p>
                     </div>
@@ -286,30 +356,30 @@ const ReceptionistDashboard = () => {
                 </div>
               </div>
 
-              {/* Recent Appointments */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              {/* Recent Appointments with responsive table */}
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
                 <h2 className="text-lg font-semibold mb-4">
                   Recent Appointments
                 </h2>
                 {recentAppointments.length > 0 ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto -mx-4 md:mx-0">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead>
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Patient
                           </th>
                          
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Date
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Time
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
@@ -320,10 +390,10 @@ const ReceptionistDashboard = () => {
                             key={appointment._id}
                             className="hover:bg-gray-50"
                           >
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <FaUserCircle className="text-gray-400 mr-2" />
-                                <span>
+                                <span className="truncate max-w-[100px] md:max-w-none">
                                   {appointment.patientName ||
                                     (appointment.patientId &&
                                     typeof appointment.patientId === "object"
@@ -333,21 +403,21 @@ const ReceptionistDashboard = () => {
                               </div>
                             </td>
                             
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                               {appointment.date
                                 ? new Date(
                                     appointment.date
                                   ).toLocaleDateString()
                                 : "N/A"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                               {appointment.time || "N/A"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap">
                               <span
                                 className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 ${
-                                  appointment.status=== "Approved"
+                                  appointment.status === "Approved"
                                     ? "bg-green-100 text-green-800"
                                     : appointment.status === "Rejected"
                                     ? "bg-red-100 text-red-800"
@@ -360,15 +430,13 @@ const ReceptionistDashboard = () => {
                               </span>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                              <div className="flex items-center space-x-3">
-                                {/* Removed the View button */}
-
+                            <td className="px-3 md:px-6 py-3 md:py-4 whitespace-nowrap text-sm">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0">
                                 {!appointment.checkedIn &&
                                   appointment.date ===
                                     new Date().toISOString().split("T")[0] && (
                                     <button
-                                      className="text-green-600 hover:text-green-900 flex items-center"
+                                      className="text-green-600 hover:text-green-900 flex items-center text-xs md:text-sm"
                                       onClick={() =>
                                         handleCheckIn(appointment._id)
                                       }
@@ -393,7 +461,7 @@ const ReceptionistDashboard = () => {
 
                                 {/* Enhanced phone button */}
                                 <button
-                                  className="text-blue-600 hover:text-blue-900 flex items-center"
+                                  className="text-blue-600 hover:text-blue-900 flex items-center text-xs md:text-sm"
                                   onClick={() => handleCallPatient(appointment)}
                                   title="Call patient"
                                 >
@@ -415,7 +483,10 @@ const ReceptionistDashboard = () => {
 
                 <div className="mt-4 flex justify-center">
                   <button
-                    onClick={() => navigate("/appointment")}
+                    onClick={() => {
+                      closeSidebar();
+                      navigate("/appointment");
+                    }}
                     className="px-4 py-2 text-sm text-blue-600 hover:text-blue-800"
                   >
                     View All Appointments

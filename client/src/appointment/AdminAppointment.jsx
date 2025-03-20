@@ -333,14 +333,14 @@ const AdminAppointment = () => {
                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
                     {/* Column for call button */}
                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <div className="flex items-center">
                         <FaPhoneAlt className="mr-1" /> Call
                       </div>
+                    </th>
+                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -384,12 +384,12 @@ const AdminAppointment = () => {
                           {appointment.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 whitespace-nowrap text-sm font-medium">
-                        {renderActionButtons(appointment)}
-                      </td>
                       {/* Cell for call button */}
                       <td className="py-3 px-4 whitespace-nowrap text-sm font-medium text-center">
                         {renderCallButton(appointment)}
+                      </td>
+                      <td className="py-3 px-4 whitespace-nowrap text-sm font-medium">
+                        {renderActionButtons(appointment)}
                       </td>
                     </tr>
                   ))}
