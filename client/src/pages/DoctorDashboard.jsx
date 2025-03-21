@@ -47,7 +47,7 @@ const DoctorDashboard = () => {
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.id;
         // Fetch appointments
-        const appointmentsRes = await axios.get("https://medcarehms.onrender.com/appointments", {
+        const appointmentsRes = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/appointments", {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -79,7 +79,7 @@ const DoctorDashboard = () => {
           .slice(0, 5);
         
         // Fetch patients - modify endpoint as needed
-        const usersRes = await axios.get("https://medcarehms.onrender.com/users", {
+        const usersRes = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users", {
           headers: { Authorization: `Bearer ${token}` }
         });
       
@@ -92,7 +92,7 @@ const DoctorDashboard = () => {
         const patientCount = patientsList.length;
         
         // Fetch reports
-        const reportsRes = await axios.get("https://medcarehms.onrender.com/reports", {
+        const reportsRes = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/reports", {
           headers: { Authorization: `Bearer ${token}` }
         });
         

@@ -49,7 +49,7 @@ const ReceptionistDashboard = () => {
 
         // Fix endpoint from "appointments" to "appointment"
         const appointmentsRes = await axios.get(
-          "https://medcarehms.onrender.com/appointments",
+          "http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/appointments",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -68,7 +68,7 @@ const ReceptionistDashboard = () => {
           .slice(0, 5);
 
         // Fetch users
-        const usersRes = await axios.get("https://medcarehms.onrender.com/users", {
+        const usersRes = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const currentUserName = usersRes.data.find((user) => user._id === id)?.name;

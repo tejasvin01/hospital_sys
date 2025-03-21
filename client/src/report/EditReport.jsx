@@ -53,7 +53,7 @@ const EditReport = () => {
         }
 
         // Fetch the report
-        const response = await axios.get(`https://medcarehms.onrender.com/reports/${reportId}`, {
+        const response = await axios.get(`http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/reports/${reportId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -80,7 +80,7 @@ const EditReport = () => {
           });
         } else if (reportData.patientId) {
           // Fetch patient details if only ID is available
-          const patientResponse = await axios.get(`https://medcarehms.onrender.com/users`, {
+          const patientResponse = await axios.get(`http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -137,7 +137,7 @@ const EditReport = () => {
       }
       
       // Update the report
-      await axios.put(`https://medcarehms.onrender.com/reports/${reportId}`, report, {
+      await axios.put(`http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/reports/${reportId}`, report, {
         headers: {
           Authorization: `Bearer ${token}`
         }

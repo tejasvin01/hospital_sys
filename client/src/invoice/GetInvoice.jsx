@@ -33,7 +33,7 @@ const GetInvoice = () => {
         return;
       }
 
-      const response = await axios.get("https://medcarehms.onrender.com/invoices/all", {
+      const response = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/invoices/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ const GetInvoice = () => {
 
       // Make API call to update the invoice status to paid
       await axios.put(
-        `https://medcarehms.onrender.com/invoices/${invoiceId}`,
+        `http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/invoices/${invoiceId}`,
         { status: "paid" },
         {
           headers: {

@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
         // Fetch users data
         const usersResponse = await axios.get(
-          "https://medcarehms.onrender.com/users",
+          "http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
         // Fetch appointments for today
         const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
         const appointmentsResponse = await axios.get(
-          "https://medcarehms.onrender.com/appointments",
+          "http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/appointments",
           {
             headers: {
               Authorization: `Bearer ${token}`,

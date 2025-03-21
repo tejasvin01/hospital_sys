@@ -26,7 +26,7 @@ const PatientReport = () => {
 
         // Fetch reports
         const response = await axios.get(
-          "https://medcarehms.onrender.com/reports/my-reports",
+          "http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/reports/my-reports",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ const PatientReport = () => {
         );
 
         // Fetch all doctors in one request for efficiency
-        const doctorsResponse = await axios.get("https://medcarehms.onrender.com/users", {
+        const doctorsResponse = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
