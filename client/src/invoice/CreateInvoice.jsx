@@ -54,7 +54,8 @@ const Createbill = () => {
       }
 
       try {
-        const response = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users", {
+        // const response = await axios.get("http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/users", {
+        const response = await axios.get("https://medcarehms.onrender.com/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -127,6 +128,7 @@ const Createbill = () => {
     try {
       const response = await axios.post(
         "http://ec2-3-110-49-41.ap-south-1.compute.amazonaws.com:5000/invoices",
+        "https://medcarehms.onrender.com/invoices",
         {
           patientId,
           amount: parseFloat(amount),
